@@ -15,20 +15,13 @@ import (
 )
 
 const (
-	MediaTypeAudio = "audio"
 	MediaTypeImage = "image"
-	MediaTypeMovie = "movie"
 )
 
 var SupportedMediaFormats = map[string]string{
-	"mpeg":      MediaTypeAudio,
-	"x-wav":     MediaTypeAudio,
-	"m4a":       MediaTypeAudio,
-	"png":       MediaTypeImage,
-	"jpeg":      MediaTypeImage,
-	"gif":       MediaTypeImage,
-	"mp4":       MediaTypeMovie,
-	"quicktime": MediaTypeMovie,
+	"png":  MediaTypeImage,
+	"jpeg": MediaTypeImage,
+	"gif":  MediaTypeImage,
 }
 
 func validateMediaType(data []byte) (string, string, bool) {
@@ -75,7 +68,6 @@ func resize(src image.Image, w, h int) *image.RGBA {
 	return dst
 }
 
-// TODO: go 1.16 以降でembed で埋め込む
 func ReadFile(path string) ([]byte, error) {
 	f, err := os.Open(path)
 	if err != nil {
@@ -87,11 +79,4 @@ func ReadFile(path string) ([]byte, error) {
 		return nil, fmt.Errorf("error! Can not get Image by %s", path)
 	}
 	return ioutil.ReadAll(f)
-}
-
-func GetShortenedText(text string, length int) string {
-	if len([]rune(text)) > length {
-		return string([]rune(text)[:length-1]) + "…"
-	}
-	return text
 }
