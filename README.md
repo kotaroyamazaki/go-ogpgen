@@ -1,6 +1,6 @@
 # go-ogpgen
 
-`go-ogpgen` can generate ogp image with text or image.
+a simple og image generator written in Go
 
 # Overview
 
@@ -22,7 +22,7 @@
 
 a simple example composed background image and text.
 
-```
+``` go
 func main() {
 	g := ogpgen.NewRandomBackGround()
 	if err := g.AttachText(&ogpgen.TextCompositionParams{
@@ -34,6 +34,7 @@ func main() {
     if err := g.Save("output.jpg"); err != nil {
 		panic(err)
 	}
+}
 ```
 
 ```
