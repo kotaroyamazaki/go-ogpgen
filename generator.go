@@ -148,7 +148,7 @@ func (c *generator) AttachText(params *TextCompositionParams) error {
 		params.FontSize = 64
 	}
 	if params.Color == nil {
-		params.Color = color.Black
+		params.Color = color.White
 	}
 	textColor := image.NewUniform(params.Color)
 
