@@ -17,8 +17,9 @@ import (
 )
 
 const (
-	OGPMaxWidth  = 1200
-	OGPMaxHeight = 630
+	ogpMaxWidth    = 1200
+	ogpMaxHeight   = 630
+	defaultQuality = 70
 )
 
 type Generator interface {
@@ -50,7 +51,7 @@ func New(path string) (Generator, error) {
 	draw.Draw(out, out.Bounds(), img, image.Point{}, draw.Src)
 	return &ogpgen{
 		img:     out,
-		quality: 70,
+		quality: defaultQuality,
 		width:   out.Rect.Dx(),
 		height:  out.Rect.Dy(),
 	}, nil
@@ -78,21 +79,24 @@ func (c *ogpgen) Save(path string) error {
 
 // SetQuality sets the quality of the generated image. 0 is lowest and 100 is highest.
 func (c *ogpgen) SetQuality(q int) {
-	if q <= 0 || q > 100 {
-		q = 70
+	if q <= 0 {
+		q = defaultQuality
+	}
+	if q > 100 {
+		q = 100
 	}
 	c.quality = q
 }
 
 // SetSize sets the size of the generated image.
 func (c *ogpgen) SetSize(w, h int) {
-	if w <= 0 || w > OGPMaxWidth {
-		c.width = OGPMaxWidth
+	if w <= 0 || w > ogpMaxWidth {
+		c.width = ogpMaxWidth
 	} else {
 		c.width = w
 	}
-	if h <= 0 || h > OGPMaxHeight {
-		c.height = OGPMaxHeight
+	if h <= 0 || h > ogpMaxHeight {
+		c.height = ogpMaxHeight
 	} else {
 		c.height = h
 	}
