@@ -4,15 +4,11 @@ import (
 	"bytes"
 	"fmt"
 	"image"
-	"image/color"
 	"image/gif"
 	"image/jpeg"
 	"image/png"
-	"math/rand"
-	"time"
 
 	"github.com/h2non/filetype"
-	"golang.org/x/image/draw"
 )
 
 const (
@@ -60,21 +56,4 @@ func anyDecode(b []byte) (image.Image, error) {
 		return nil, err
 	}
 	return img, nil
-}
-
-func resize(src image.Image, w, h int) *image.RGBA {
-	rct := src.Bounds()
-	dst := image.NewRGBA(image.Rect(0, 0, w, h))
-	draw.CatmullRom.Scale(dst, dst.Bounds(), src, rct, draw.Over, nil)
-	return dst
-}
-
-func generateRandomImageUniform() *image.Uniform {
-	rand.Seed(time.Now().UnixNano())
-	return image.NewUniform(color.RGBA{
-		R: uint8(rand.Intn(256)),
-		G: uint8(rand.Intn(256)),
-		B: uint8(rand.Intn(256)),
-		A: 255,
-	})
 }
