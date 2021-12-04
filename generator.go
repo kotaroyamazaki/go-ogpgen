@@ -46,6 +46,8 @@ func NewGenerator(b []byte) (Generator, error) {
 	return &generator{
 		img:     out,
 		quality: 70,
+		width:   out.Rect.Dx(),
+		height:  out.Rect.Dy(),
 	}, nil
 }
 
@@ -141,8 +143,10 @@ func (c *generator) AttachText(params *TextCompositionParams) error {
 		return err
 	}
 	if params.TextPoint.X == 0 && params.TextPoint.Y == 0 {
-		params.TextPoint = image.Point{c.width / 2,
-			c.height / 2}
+		params.TextPoint = image.Point{
+			c.width / 2,
+			c.height / 2,
+		}
 	}
 	if params.FontSize == 0 {
 		params.FontSize = 64
