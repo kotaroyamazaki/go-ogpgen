@@ -1,4 +1,4 @@
-module hoge
+module github.com/KotaroYamazaki/go-ogp-generator
 
 go 1.16
 

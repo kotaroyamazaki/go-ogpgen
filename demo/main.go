@@ -3,13 +3,14 @@ package main
 import (
 	"bytes"
 	"fmt"
-	"hoge/ogp"
 	"image"
 	"image/color"
 	"image/jpeg"
 	"io/ioutil"
 	"log"
 	"os"
+
+	"github.com/KotaroYamazaki/go-ogp-generator"
 )
 
 func main() {
