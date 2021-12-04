@@ -14,10 +14,17 @@ go-ogp-generator can generate ogp image with text or image.
 
 ```
 func main() {
-	baseImg, err := readFile("base_image.png")
+	f, err := os.Open(path)
 	if err != nil {
 		panic(err)
 	}
+	defer f.Close()
+
+	baseImg, err := ioutil.ReadAll(f)
+	if err != nil {
+		panic(err)
+	}
+
 	g, err := ogp.NewGenerator(baseImg)
 	if err != nil {
 		panic(err)
