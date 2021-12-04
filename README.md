@@ -32,4 +32,4 @@ func main() {
 open ./output.jpg
 ```
 
-The code for the more complex case of combining images and text, as shown in the overview, is available in [/demo](./demo)
+The code for the more complex case of combining images and text, as shown in the overview, is available in [/demo/baseimage_with_text](./demo/baseimage_with_text)

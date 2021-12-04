@@ -112,6 +112,7 @@ func (c *ogpgen) SetSize(w, h int) {
 	} else {
 		c.height = h
 	}
+	c.img = resize(c.img, c.width, c.height)
 }
 
 type ImageCompositionParams struct {
@@ -167,14 +168,14 @@ func (c *ogpgen) AttachText(params *TextCompositionParams) error {
 	if err := params.validate(); err != nil {
 		return err
 	}
+	if params.FontSize == 0 {
+		params.FontSize = 64
+	}
 	if params.TextPoint.X == 0 && params.TextPoint.Y == 0 {
 		params.TextPoint = image.Point{
 			c.width / 2,
-			c.height / 2,
+			c.height/2 - params.FontSize/4,
 		}
-	}
-	if params.FontSize == 0 {
-		params.FontSize = 64
 	}
 	if params.Color == nil {
 		params.Color = color.White
