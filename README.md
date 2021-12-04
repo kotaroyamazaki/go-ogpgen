@@ -4,14 +4,7 @@
 
 go-ogp-generator can generate ogp image with text or image.
 
-<img src="https://user-images.githubusercontent.com/7589567/144632239-9ecc752b-bc44-4ddc-ab4d-a3769629a891.png" width="300">
-+
-"Hello,world!"
-+
-<img src="https://user-images.githubusercontent.com/7589567/144632750-db415550-3622-473e-a17e-ed1626124d23.png" width="100">
-+
-"KotaroYamazaki"
 
-= 
+![overview](https://user-images.githubusercontent.com/7589567/144695117-61ef81e7-04ce-4f4d-b5f8-77bc2596f787.png)
 
-![img](https://user-images.githubusercontent.com/7589567/144632703-e2772c86-fe0f-4715-856e-ce2f37e092b5.jpeg)
+([The Gopher](https://blog.golang.org/gopher) on the base iamge was designed by [Renée French.](http://reneefrench.blogspot.com/))
