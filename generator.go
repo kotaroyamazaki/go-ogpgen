@@ -57,6 +57,18 @@ func New(path string) (Generator, error) {
 	}, nil
 }
 
+// NewRandomColor returns generator which have a random color base image.
+func NewRandomBackground() Generator {
+	out := image.NewRGBA(image.Rect(0, 0, ogpMaxWidth, ogpMaxHeight))
+	draw.Draw(out, out.Bounds(), generateRandomImageUniform(), image.Point{}, draw.Src)
+	return &ogpgen{
+		img:     out,
+		quality: defaultQuality,
+		width:   out.Rect.Dx(),
+		height:  out.Rect.Dy(),
+	}
+}
+
 // Get returns the image as []byte.
 func (c *ogpgen) Get() ([]byte, error) {
 	buff := bytes.NewBuffer([]byte{})

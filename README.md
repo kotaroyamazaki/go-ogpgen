@@ -16,11 +16,7 @@ a simple example composed background image and text.
 
 ```
 func main() {
-	g, err := ogpgen.New(path)
-	if err != nil {
-		panic(err)
-	}
-
+	g := ogpgen.NewRandomBackGround()
 	if err := g.AttachText(&ogpgen.TextCompositionParams{
 		Text: "Hello, World!",
 	}); err != nil {
