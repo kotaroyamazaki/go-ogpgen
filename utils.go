@@ -1,4 +1,4 @@
-package ogp
+package ogpgen
 
 import (
 	"bytes"

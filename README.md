@@ -1,4 +1,4 @@
-# go-ogp-generator
+# go-ogpgen
 
 # Overview
 
@@ -16,12 +16,12 @@ a simple example composed background image and text.
 
 ```
 func main() {
-	g, err := ogp.NewGenerator(path)
+	g, err := ogpgen.New(path)
 	if err != nil {
 		panic(err)
 	}
 
-	if err := g.AttachText(&ogp.TextCompositionParams{
+	if err := g.AttachText(&ogpgen.TextCompositionParams{
 		Text: "Hello, World!",
 	}); err != nil {
 		panic(err)

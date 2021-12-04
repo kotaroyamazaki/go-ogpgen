@@ -1,4 +1,4 @@
-module github.com/KotaroYamazaki/go-ogp-generator
+module ogpgen
 
 go 1.16
 

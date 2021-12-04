@@ -1,4 +1,4 @@
-package ogp
+package ogpgen
 
 import (
 	"bytes"
@@ -30,14 +30,14 @@ type Generator interface {
 	SetSize(int, int)
 }
 
-type generator struct {
+type ogpgen struct {
 	img     *image.RGBA
 	quality int
 	height  int
 	width   int
 }
 
-func NewGenerator(path string) (Generator, error) {
+func New(path string) (Generator, error) {
 	b, err := readImageBytes(path)
 	if err != nil {
 		return nil, err
@@ -48,7 +48,7 @@ func NewGenerator(path string) (Generator, error) {
 	}
 	out := image.NewRGBA(img.Bounds())
 	draw.Draw(out, out.Bounds(), img, image.Point{}, draw.Src)
-	return &generator{
+	return &ogpgen{
 		img:     out,
 		quality: 70,
 		width:   out.Rect.Dx(),
@@ -57,7 +57,7 @@ func NewGenerator(path string) (Generator, error) {
 }
 
 // Get returns the image as []byte.
-func (c *generator) Get() ([]byte, error) {
+func (c *ogpgen) Get() ([]byte, error) {
 	buff := bytes.NewBuffer([]byte{})
 	err := jpeg.Encode(buff, c.img, &jpeg.Options{Quality: c.quality})
 	if err != nil {
@@ -67,7 +67,7 @@ func (c *generator) Get() ([]byte, error) {
 }
 
 // Save saves the image to the specified path.
-func (c *generator) Save(path string) error {
+func (c *ogpgen) Save(path string) error {
 	buff := bytes.NewBuffer([]byte{})
 	err := jpeg.Encode(buff, c.img, &jpeg.Options{Quality: c.quality})
 	if err != nil {
@@ -77,7 +77,7 @@ func (c *generator) Save(path string) error {
 }
 
 // SetQuality sets the quality of the generated image. 0 is lowest and 100 is highest.
-func (c *generator) SetQuality(q int) {
+func (c *ogpgen) SetQuality(q int) {
 	if q <= 0 || q > 100 {
 		q = 70
 	}
@@ -85,7 +85,7 @@ func (c *generator) SetQuality(q int) {
 }
 
 // SetSize sets the size of the generated image.
-func (c *generator) SetSize(w, h int) {
+func (c *ogpgen) SetSize(w, h int) {
 	if w <= 0 || w > OGPMaxWidth {
 		c.width = OGPMaxWidth
 	} else {
@@ -106,7 +106,7 @@ type ImageCompositionParams struct {
 }
 
 // AttachImage attaches an image to the base image.
-func (c *generator) AttachImage(params *ImageCompositionParams) error {
+func (c *ogpgen) AttachImage(params *ImageCompositionParams) error {
 	b, err := readImageBytes(params.ImagePath)
 	if err != nil {
 		return err
@@ -147,7 +147,7 @@ func (p *TextCompositionParams) validate() error {
 }
 
 // AttachText attaches text to the base image.
-func (c *generator) AttachText(params *TextCompositionParams) error {
+func (c *ogpgen) AttachText(params *TextCompositionParams) error {
 	if err := params.validate(); err != nil {
 		return err
 	}
@@ -193,7 +193,7 @@ func (c *generator) AttachText(params *TextCompositionParams) error {
 	return err
 }
 
-func (c *generator) getTextWidth(fontSize float64, text string, fonts *truetype.Font) int {
+func (c *ogpgen) getTextWidth(fontSize float64, text string, fonts *truetype.Font) int {
 	var textWidth int
 	var face font.Face
 	opts := truetype.Options{}

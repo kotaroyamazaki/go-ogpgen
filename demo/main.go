@@ -3,18 +3,17 @@ package main
 import (
 	"image"
 	"image/color"
-
-	"github.com/KotaroYamazaki/go-ogp-generator"
+	"ogpgen"
 )
 
 func main() {
-	g, err := ogp.NewGenerator("base_image.png")
+	g, err := ogpgen.New("base_image.png")
 	if err != nil {
 		panic(err)
 	}
 	g.SetQuality(100)
 
-	if err := g.AttachText(&ogp.TextCompositionParams{
+	if err := g.AttachText(&ogpgen.TextCompositionParams{
 		Text: "Generate OGP ",
 		TextPoint: image.Point{
 			X: 600,
@@ -25,7 +24,7 @@ func main() {
 	}); err != nil {
 		panic(err)
 	}
-	if err := g.AttachText(&ogp.TextCompositionParams{
+	if err := g.AttachText(&ogpgen.TextCompositionParams{
 		Text: "with any text or image!",
 		TextPoint: image.Point{
 			X: 600,
@@ -38,11 +37,11 @@ func main() {
 	}
 
 	iconSize := 150
-	if err := g.AttachImage(&ogp.ImageCompositionParams{
+	if err := g.AttachImage(&ogpgen.ImageCompositionParams{
 		ResizeWidth:  iconSize,
 		ResizeHeight: iconSize,
 		ImagePath:    "identicon.png",
-		Mask: &ogp.Mask{
+		Mask: &ogpgen.Mask{
 			Point: image.Point{
 				X: 64 + iconSize/2,
 				Y: 630 - iconSize/2 - 24,
@@ -52,7 +51,7 @@ func main() {
 	}); err != nil {
 		panic(err)
 	}
-	if err := g.AttachText(&ogp.TextCompositionParams{
+	if err := g.AttachText(&ogpgen.TextCompositionParams{
 		Text: "KotaroYamazaki",
 		TextPoint: image.Point{
 			X: 64 + iconSize*2,
