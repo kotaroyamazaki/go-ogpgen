@@ -32,11 +32,10 @@ type Generator interface {
 }
 
 type generator struct {
-	baseImg       image.Image
-	compositedImg *image.RGBA
-	quality       int
-	Height        int
-	Width         int
+	img     *image.RGBA
+	quality int
+	Height  int
+	Width   int
 }
 
 func NewGenerator(b []byte) (Generator, error) {
@@ -47,15 +46,14 @@ func NewGenerator(b []byte) (Generator, error) {
 	out := image.NewRGBA(img.Bounds())
 	draw.Draw(out, out.Bounds(), img, image.Point{}, draw.Src)
 	return &generator{
-		baseImg:       img,
-		compositedImg: out,
-		quality:       70,
+		img:     out,
+		quality: 70,
 	}, nil
 }
 
 func (c *generator) Get() ([]byte, error) {
 	buff := bytes.NewBuffer([]byte{})
-	err := jpeg.Encode(buff, c.compositedImg, &jpeg.Options{Quality: c.quality})
+	err := jpeg.Encode(buff, c.img, &jpeg.Options{Quality: c.quality})
 	if err != nil {
 		return nil, err
 	}
@@ -102,10 +100,10 @@ func (c *generator) AttachImage(params *ImageCompositionParams) error {
 	}
 	if params.Mask != nil {
 		sp := image.Pt(params.ResizeWidth/2-params.Mask.Point.X, params.ResizeHeight/2-params.Mask.Point.Y)
-		draw.DrawMask(c.compositedImg, c.compositedImg.Bounds(), img, sp, params.Mask, image.Point{}, draw.Over)
+		draw.DrawMask(c.img, c.img.Bounds(), img, sp, params.Mask, image.Point{}, draw.Over)
 	} else {
 		sp := image.Point{}
-		draw.Draw(c.compositedImg, img.Bounds(), img, sp, draw.Over)
+		draw.Draw(c.img, img.Bounds(), img, sp, draw.Over)
 	}
 	return nil
 }
@@ -160,8 +158,8 @@ func (c *generator) AttachText(params *TextCompositionParams) error {
 	f := freetype.NewContext()
 	f.SetFont(_font)
 	f.SetFontSize(float64(params.FontSize))
-	f.SetDst(c.compositedImg)
-	f.SetClip(c.baseImg.Bounds())
+	f.SetDst(c.img)
+	f.SetClip(c.img.Bounds())
 	f.SetSrc(textColor)
 
 	textWidth := c.getTextWidth(float64(params.FontSize), params.Text, _font)

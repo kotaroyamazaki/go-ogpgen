@@ -29,7 +29,6 @@ func main() {
 			Y: 100,
 		},
 		Color: color.White,
-		//FontPath: "./MPLUSRounded1c-Bold.ttf",
 	}); err != nil {
 		panic(err)
 	}
@@ -59,7 +58,6 @@ func main() {
 		},
 		FontSize: 32,
 		Color:    color.White,
-		//FontPath: "./MPLUSRounded1c-Bold.ttf",
 	}); err != nil {
 		panic(err)
 	}
