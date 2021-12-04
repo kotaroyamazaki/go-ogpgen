@@ -1,21 +1,14 @@
 package main
 
 import (
-	"fmt"
 	"image"
 	"image/color"
-	"io/ioutil"
-	"os"
 
 	"github.com/KotaroYamazaki/go-ogp-generator"
 )
 
 func main() {
-	baseImg, err := readFile("base_image.png")
-	if err != nil {
-		panic(err)
-	}
-	g, err := ogp.NewGenerator(baseImg)
+	g, err := ogp.NewGenerator("base_image.png")
 	if err != nil {
 		panic(err)
 	}
@@ -27,6 +20,7 @@ func main() {
 			X: 600,
 			Y: 150,
 		},
+		Color:    color.Black,
 		FontSize: 56,
 	}); err != nil {
 		panic(err)
@@ -37,20 +31,17 @@ func main() {
 			X: 600,
 			Y: 150 + 64,
 		},
+		Color:    color.Black,
 		FontSize: 56,
 	}); err != nil {
 		panic(err)
 	}
 
-	embedImg, err := readFile("identicon.png")
-	if err != nil {
-		panic(err)
-	}
 	iconSize := 150
 	if err := g.AttachImage(&ogp.ImageCompositionParams{
 		ResizeWidth:  iconSize,
 		ResizeHeight: iconSize,
-		Image:        embedImg,
+		ImagePath:    "identicon.png",
 		Mask: &ogp.Mask{
 			Point: image.Point{
 				X: 64 + iconSize/2,
@@ -76,17 +67,4 @@ func main() {
 	if err := g.Save("output.jpg"); err != nil {
 		panic(err)
 	}
-}
-
-func readFile(path string) ([]byte, error) {
-	f, err := os.Open(path)
-	if err != nil {
-		return nil, err
-	}
-	defer f.Close()
-
-	if f == nil {
-		return nil, fmt.Errorf("error! Can not get image by %s", path)
-	}
-	return ioutil.ReadAll(f)
 }

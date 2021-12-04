@@ -12,20 +12,11 @@ go-ogp-generator can generate ogp image with text or image.
 
 ## code example
 
+a simple example composed background image and text.
+
 ```
 func main() {
-	f, err := os.Open(path)
-	if err != nil {
-		panic(err)
-	}
-	defer f.Close()
-
-	baseImg, err := ioutil.ReadAll(f)
-	if err != nil {
-		panic(err)
-	}
-
-	g, err := ogp.NewGenerator(baseImg)
+	g, err := ogp.NewGenerator(path)
 	if err != nil {
 		panic(err)
 	}
@@ -44,3 +35,5 @@ func main() {
 ```
 open ./output.jpg
 ```
+
+The code for the more complex case of combining images and text, as shown in the overview, is available in [/demo](./demo)

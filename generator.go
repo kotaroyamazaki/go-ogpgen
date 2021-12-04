@@ -8,6 +8,7 @@ import (
 	"image/color"
 	"image/jpeg"
 	"io/ioutil"
+	"os"
 
 	"github.com/golang/freetype"
 	"github.com/golang/freetype/truetype"
@@ -36,7 +37,11 @@ type generator struct {
 	width   int
 }
 
-func NewGenerator(b []byte) (Generator, error) {
+func NewGenerator(path string) (Generator, error) {
+	b, err := readImageBytes(path)
+	if err != nil {
+		return nil, err
+	}
 	img, err := anyDecode(b)
 	if err != nil {
 		return nil, err
@@ -96,13 +101,17 @@ func (c *generator) SetSize(w, h int) {
 type ImageCompositionParams struct {
 	ResizeWidth  int
 	ResizeHeight int
-	Image        []byte
+	ImagePath    string
 	Mask         *Mask
 }
 
 // AttachImage attaches an image to the base image.
 func (c *generator) AttachImage(params *ImageCompositionParams) error {
-	img, err := anyDecode(params.Image)
+	b, err := readImageBytes(params.ImagePath)
+	if err != nil {
+		return err
+	}
+	img, err := anyDecode(b)
 	if err != nil {
 		return err
 	}
@@ -198,4 +207,13 @@ func (c *generator) getTextWidth(fontSize float64, text string, fonts *truetype.
 		textWidth += int(float64(awidth) / 64)
 	}
 	return textWidth
+}
+
+func readImageBytes(path string) ([]byte, error) {
+	f, err := os.Open(path)
+	if err != nil {
+		return nil, err
+	}
+	defer f.Close()
+	return ioutil.ReadAll(f)
 }
