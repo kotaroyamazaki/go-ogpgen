@@ -1,24 +1,21 @@
 package main
 
 import (
-	"bytes"
 	"fmt"
 	"image"
 	"image/color"
-	"image/jpeg"
 	"io/ioutil"
-	"log"
 	"os"
 
 	"github.com/KotaroYamazaki/go-ogp-generator"
 )
 
 func main() {
-	img, err := readFile("base_image.png")
+	baseImg, err := readFile("base_image.png")
 	if err != nil {
 		panic(err)
 	}
-	g, err := ogp.NewGenerator(img)
+	g, err := ogp.NewGenerator(baseImg)
 	if err != nil {
 		panic(err)
 	}
@@ -45,7 +42,7 @@ func main() {
 		panic(err)
 	}
 
-	img2, err := readFile("identicon.png")
+	embedImg, err := readFile("identicon.png")
 	if err != nil {
 		panic(err)
 	}
@@ -53,7 +50,7 @@ func main() {
 	if err := g.AttachImage(&ogp.ImageCompositionParams{
 		ResizeWidth:  iconSize,
 		ResizeHeight: iconSize,
-		Image:        img2,
+		Image:        embedImg,
 		Mask: &ogp.Mask{
 			Point: image.Point{
 				X: 64 + iconSize/2,
@@ -76,24 +73,8 @@ func main() {
 		panic(err)
 	}
 
-	og, err := g.Get()
-	if err != nil {
+	if err := g.Save("output.jpg"); err != nil {
 		panic(err)
-	}
-	_img, _, err := image.Decode(bytes.NewReader(og))
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	out, _ := os.Create("./img.jpeg")
-	defer out.Close()
-
-	var opts jpeg.Options
-	opts.Quality = 70
-
-	err = jpeg.Encode(out, _img, &opts)
-	if err != nil {
-		log.Println(err)
 	}
 }
 
@@ -105,7 +86,7 @@ func readFile(path string) ([]byte, error) {
 	defer f.Close()
 
 	if f == nil {
-		return nil, fmt.Errorf("Error! Can not get Image by %s.", path)
+		return nil, fmt.Errorf("error! Can not get image by %s", path)
 	}
 	return ioutil.ReadAll(f)
 }

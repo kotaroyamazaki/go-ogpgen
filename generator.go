@@ -20,13 +20,11 @@ const (
 	OGPMaxHeight = 630
 )
 
-//go:embed fonts/MPLUSRounded1c-Bold.ttf
-var defaultFont []byte
-
 type Generator interface {
 	AttachImage(*ImageCompositionParams) error
 	AttachText(*TextCompositionParams) error
 	Get() ([]byte, error)
+	Save(string) error
 	SetQuality(int)
 	SetSize(int, int)
 }
@@ -34,8 +32,8 @@ type Generator interface {
 type generator struct {
 	img     *image.RGBA
 	quality int
-	Height  int
-	Width   int
+	height  int
+	width   int
 }
 
 func NewGenerator(b []byte) (Generator, error) {
@@ -51,6 +49,7 @@ func NewGenerator(b []byte) (Generator, error) {
 	}, nil
 }
 
+// Get returns the image as []byte.
 func (c *generator) Get() ([]byte, error) {
 	buff := bytes.NewBuffer([]byte{})
 	err := jpeg.Encode(buff, c.img, &jpeg.Options{Quality: c.quality})
@@ -58,6 +57,16 @@ func (c *generator) Get() ([]byte, error) {
 		return nil, err
 	}
 	return buff.Bytes(), nil
+}
+
+// Save saves the image to the specified path.
+func (c *generator) Save(path string) error {
+	buff := bytes.NewBuffer([]byte{})
+	err := jpeg.Encode(buff, c.img, &jpeg.Options{Quality: c.quality})
+	if err != nil {
+		return err
+	}
+	return ioutil.WriteFile(path, buff.Bytes(), 0644)
 }
 
 // SetQuality sets the quality of the generated image. 0 is lowest and 100 is highest.
@@ -71,14 +80,14 @@ func (c *generator) SetQuality(q int) {
 // SetSize sets the size of the generated image.
 func (c *generator) SetSize(w, h int) {
 	if w <= 0 || w > OGPMaxWidth {
-		c.Width = OGPMaxWidth
+		c.width = OGPMaxWidth
 	} else {
-		c.Width = w
+		c.width = w
 	}
 	if h <= 0 || h > OGPMaxHeight {
-		c.Height = OGPMaxHeight
+		c.height = OGPMaxHeight
 	} else {
-		c.Height = h
+		c.height = h
 	}
 }
 
@@ -116,6 +125,9 @@ type TextCompositionParams struct {
 	FontPath  string
 }
 
+//go:embed fonts/MPLUSRounded1c-Bold.ttf
+var defaultFont []byte
+
 func (p *TextCompositionParams) validate() error {
 	if p.Text == "" {
 		return errors.New("text is empty")
@@ -129,8 +141,8 @@ func (c *generator) AttachText(params *TextCompositionParams) error {
 		return err
 	}
 	if params.TextPoint.X == 0 && params.TextPoint.Y == 0 {
-		params.TextPoint = image.Point{c.Width / 2,
-			c.Height / 2}
+		params.TextPoint = image.Point{c.width / 2,
+			c.height / 2}
 	}
 	if params.FontSize == 0 {
 		params.FontSize = 64
@@ -168,7 +180,6 @@ func (c *generator) AttachText(params *TextCompositionParams) error {
 	return err
 }
 
-// getTextWidth returns the width of the text in the font.
 func (c *generator) getTextWidth(fontSize float64, text string, fonts *truetype.Font) int {
 	var textWidth int
 	var face font.Face
