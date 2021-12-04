@@ -2,6 +2,7 @@ package ogp
 
 import (
 	"bytes"
+	_ "embed"
 	"errors"
 	"image"
 	"image/color"
@@ -18,6 +19,9 @@ const (
 	OGPMaxWidth  = 1200
 	OGPMaxHeight = 630
 )
+
+//go:embed fonts/MPLUSRounded1c-Bold.ttf
+var defaultFont []byte
 
 type Generator interface {
 	AttachImage(*ImageCompositionParams) error
@@ -118,9 +122,6 @@ func (p *TextCompositionParams) validate() error {
 	if p.Text == "" {
 		return errors.New("text is empty")
 	}
-	if p.FontPath == "" {
-		return errors.New("font path is empty")
-	}
 	return nil
 }
 
@@ -139,31 +140,34 @@ func (c *generator) AttachText(params *TextCompositionParams) error {
 	if params.Color == nil {
 		params.Color = color.Black
 	}
-
 	textColor := image.NewUniform(params.Color)
-	font, err := c.getFont(params.FontPath)
+
+	var font []byte
+	if params.FontPath == "" {
+		font = defaultFont
+	} else {
+		var err error
+		font, err = ioutil.ReadFile(params.FontPath)
+		if err != nil {
+			return err
+		}
+	}
+
+	_font, err := truetype.Parse(font)
 	if err != nil {
 		return err
 	}
 	f := freetype.NewContext()
-	f.SetFont(font)
+	f.SetFont(_font)
 	f.SetFontSize(float64(params.FontSize))
 	f.SetDst(c.compositedImg)
 	f.SetClip(c.baseImg.Bounds())
 	f.SetSrc(textColor)
 
-	textWidth := c.getTextWidth(float64(params.FontSize), params.Text, font)
+	textWidth := c.getTextWidth(float64(params.FontSize), params.Text, _font)
 	pt := freetype.Pt(params.TextPoint.X-textWidth/2, params.TextPoint.Y+params.FontSize/2)
 	_, err = f.DrawString(params.Text, pt)
 	return err
-}
-
-func (o *generator) getFont(fontPath string) (*truetype.Font, error) {
-	b, err := ioutil.ReadFile(fontPath)
-	if err != nil {
-		return nil, err
-	}
-	return freetype.ParseFont(b)
 }
 
 // getTextWidth returns the width of the text in the font.
